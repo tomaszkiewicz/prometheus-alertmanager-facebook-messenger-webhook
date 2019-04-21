@@ -8,7 +8,7 @@ RUN adduser --uid 10000 -D -g '' user
 COPY . /src
 WORKDIR /src
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -ldflags="-w -s" -o app
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -ldflags="-w -s" -o app ./cmd/webhook
 
 FROM scratch
 
