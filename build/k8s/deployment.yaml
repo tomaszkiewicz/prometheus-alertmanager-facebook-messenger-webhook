@@ -1,0 +1,57 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: alertmanager-messenger-webhook
+  labels:
+    k8s-app: alertmanager-messenger-webhook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: alertmanager-messenger-webhook
+  template:
+    metadata:
+      labels:
+        k8s-app: alertmanager-messenger-webhook
+    spec:
+      containers:
+      - name: app
+        image: luktom/prometheus-alertmanager-facebook-messenger-webhook
+        env:
+        - name: FACEBOOK_RECIPIENT_ID
+          value: "0000000000"
+        - name: FACEBOOK_PAGE_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: alertmanager-messenger-webhook
+              key: facebookPageToken
+        ports:
+        - name: http
+          containerPort: 8079
+        livenessProbe:
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+          periodSeconds: 15
+          httpGet:
+            path: /healthz
+            port: http
+        readinessProbe:
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+          periodSeconds: 15
+          httpGet:
+            path: /healthz
+            port: http
+        resources:
+          requests:
+            memory: 300Mi
+          limits:
+            memory: 300Mi
+        volumeMounts:
+        - name: secrets
+          mountPath: "/alertmanager-messenger-webhook/secrets"
+          readOnly: true
+      volumes:
+      - name: secrets
+        secret:
+          secretName: alertmanager-messenger-webhook

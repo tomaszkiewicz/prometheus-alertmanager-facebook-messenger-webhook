@@ -1,0 +1,14 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: alertmanager-messenger-webhook
+  labels:
+    k8s-app: alertmanager-messenger-webhook
+spec:
+  selector:
+    k8s-app: alertmanager-messenger-webhook
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
